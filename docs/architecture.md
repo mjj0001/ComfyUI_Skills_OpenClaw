@@ -1,6 +1,6 @@
 ---
 title: Architecture
-description: Technical overview of how ComfyUI Skills maps agent input into ComfyUI workflow execution through the CLI, schema layer, and multi-server routing.
+description: Technical overview of how ComfyUI Skills routes agent input through the workflow CLI or the official local Comfy MCP.
 permalink: /architecture/
 ---
 
@@ -8,8 +8,8 @@ permalink: /architecture/
   <p class="eyebrow">Architecture</p>
   <h1>How the repository turns agent input into ComfyUI execution.</h1>
   <p class="lede">
-    The architecture is intentionally simple: expose workflows, map a small parameter surface,
-    queue the job, poll for completion, and download images back to local disk.
+    The Skill keeps a stable CLI path for known workflows and adds the official local Comfy MCP
+    when an agent needs live discovery, validation, or orchestration.
   </p>
 </section>
 
@@ -20,9 +20,21 @@ permalink: /architecture/
     <ul class="definition-list">
       <li><strong>SKILL.md</strong>: the agent-facing contract that explains how the skill is discovered and called.</li>
       <li><strong>comfyui-skill CLI</strong>: the primary interface for discovering, executing, and managing workflows. Install via <code>pip install comfyui-skill-cli</code>.</li>
+      <li><strong>official local Comfy MCP</strong>: the optional live interface for templates, nodes, models, validation, jobs, and ComfyUI lifecycle operations.</li>
+      <li><strong>scripts/comfy_mcp.py</strong>: a fallback stdio bridge for shell-only Agent hosts; native host MCP tools remain preferred.</li>
       <li><strong>config.json</strong>: multi-server configuration — server URLs, auth, default server.</li>
       <li><strong>data/</strong>: workflow storage organized by <code>&lt;server_id&gt;/&lt;workflow_id&gt;/</code>.</li>
       <li><strong>ui/</strong>: optional FastAPI-based local dashboard for visual workflow management.</li>
+    </ul>
+  </section>
+
+  <section class="section-card">
+    <p class="eyebrow-label">Application Routing</p>
+    <h2>CLI for known work, MCP for live decisions</h2>
+    <ul class="definition-list">
+      <li><strong>CLI route</strong>: registered workflows, repeated execution, batch jobs, uploads, and history.</li>
+      <li><strong>MCP route</strong>: current template, node, and model discovery; raw-workflow validation; template adaptation; and lifecycle control.</li>
+      <li><strong>Single-submit rule</strong>: after either route returns a <code>prompt_id</code>, status and outputs stay on that route so one request cannot generate twice.</li>
     </ul>
   </section>
 
@@ -83,6 +95,7 @@ permalink: /architecture/
     <div class="card-cta">
       <a class="button primary" href="{{ '/getting-started/' | relative_url }}">Getting Started</a>
       <a class="button secondary" href="{{ '/use-cases/' | relative_url }}">Use Cases</a>
+      <a class="button secondary" href="{{ '/comfy-mcp-application-layer/' | relative_url }}">Local Comfy MCP</a>
       <a class="button secondary" href="{{ '/faq/' | relative_url }}">FAQ</a>
     </div>
   </section>

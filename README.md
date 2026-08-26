@@ -65,7 +65,24 @@ Use it when you want to import existing ComfyUI workflows, expose only the param
 | **ComfyUI workflow import** | Import workflow JSON files, auto-detect formats, and generate the mapping layer needed for agent use. |
 | **Multi-server routing** | Manage local and remote ComfyUI servers under one namespace and route jobs to the right machine. |
 | **Dependency management** | Check missing nodes and models before execution and install supported dependencies through the CLI. |
+| **Official local Comfy MCP** | Use the official runtime interface for live template, node, and model discovery, raw-workflow validation, and advanced orchestration while keeping CLI execution fast. |
 | **Optional Web UI** | A visual layer for configuration and testing. It does not replace the CLI, and agent-facing actions still map to the same CLI workflow. |
+
+## CLI And Official Local Comfy MCP
+
+This Skill treats CLI and MCP as two tools for different jobs, not as replacements for each other:
+
+- Use `comfyui-skill` for registered workflows, repeated execution, batch jobs, uploads, and history.
+- Use the official local Comfy MCP when the Agent needs to discover current templates, nodes, or models, validate a raw workflow, adapt a template, or manage the local ComfyUI lifecycle.
+
+If the Agent host already exposes the official MCP tools, the Skill calls them directly. A shell-only host can use the included bridge:
+
+```bash
+python ./scripts/comfy_mcp.py probe
+python ./scripts/comfy_mcp.py call search_templates --arguments '{"query":"upscale"}'
+```
+
+See [Official Local Comfy MCP Integration](https://huangyuchuh.github.io/ComfyUI_Skills_OpenClaw/comfy-mcp-application-layer/) for setup, routing, and safety boundaries.
 
 <a id="quick-start"></a>
 ## Quick Start

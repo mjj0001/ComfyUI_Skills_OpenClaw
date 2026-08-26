@@ -36,6 +36,9 @@ except ImportError:
     from workflow_import import WorkflowBulkImporter
 
 
+_MCP_CONFIG_KEYS = ("mcp_command", "mcp_args", "mcp_python", "mcp_cwd", "mcp_env")
+
+
 def _read_json(path: Path, fallback: Any = None) -> Any:
     if not path.exists():
         return fallback
@@ -100,6 +103,22 @@ class UIStorageService:
         return get_runtime_config()
 
     def save_config(self, config: dict[str, Any]) -> dict[str, Any]:
+        current = _read_json(CONFIG_PATH, fallback={})
+        if isinstance(current, dict):
+            current_servers = {
+                str(server.get("id") or "").strip(): server
+                for server in current.get("servers", [])
+                if isinstance(server, dict) and str(server.get("id") or "").strip()
+            }
+            for server in config.get("servers", []):
+                if not isinstance(server, dict):
+                    continue
+                existing = current_servers.get(str(server.get("id") or "").strip(), {})
+                for key in _MCP_CONFIG_KEYS:
+                    if key not in server and key in existing:
+                        server[key] = existing[key]
+            if "default_server" not in config and "default_server" in current:
+                config["default_server"] = current["default_server"]
         _write_json(CONFIG_PATH, config)
         return config
 
@@ -134,6 +153,14 @@ class UIStorageService:
             "comfy_api_key": str(server.get("comfy_api_key") or "").strip(),
             "enabled": bool(server.get("enabled", True)),
             "output_dir": str(server.get("output_dir") or "./outputs").strip() or "./outputs",
+            "mcp_command": str(server.get("mcp_command") or "comfy-mcp").strip() or "comfy-mcp",
+            "mcp_args": [str(item) for item in server.get("mcp_args", [])],
+            "mcp_python": str(server.get("mcp_python") or "").strip(),
+            "mcp_cwd": str(server.get("mcp_cwd") or "").strip(),
+            "mcp_env": {
+                str(key): str(value)
+                for key, value in (server.get("mcp_env") or {}).items()
+            },
             "workflow_order": [],
         }
 
@@ -163,6 +190,19 @@ class UIStorageService:
                     s["enabled"] = bool(updates["enabled"])
                 if "output_dir" in updates:
                     s["output_dir"] = str(updates["output_dir"] or "./outputs").strip() or "./outputs"
+                if "mcp_command" in updates:
+                    s["mcp_command"] = str(updates["mcp_command"] or "comfy-mcp").strip() or "comfy-mcp"
+                if "mcp_args" in updates:
+                    s["mcp_args"] = [str(item) for item in updates["mcp_args"]]
+                if "mcp_python" in updates:
+                    s["mcp_python"] = str(updates["mcp_python"] or "").strip()
+                if "mcp_cwd" in updates:
+                    s["mcp_cwd"] = str(updates["mcp_cwd"] or "").strip()
+                if "mcp_env" in updates:
+                    s["mcp_env"] = {
+                        str(key): str(value)
+                        for key, value in (updates["mcp_env"] or {}).items()
+                    }
                 self.save_config(config)
                 return self._serialize_server_for_ui(s)
         raise FileNotFoundError(f"Server '{server_id}' not found")
@@ -578,6 +618,14 @@ class UIStorageService:
             "comfy_api_key": str(server.get("comfy_api_key") or ""),
             "enabled": bool(server.get("enabled", True)),
             "output_dir": str(server.get("output_dir") or "./outputs").strip() or "./outputs",
+            "mcp_command": str(server.get("mcp_command") or "comfy-mcp").strip() or "comfy-mcp",
+            "mcp_args": [str(item) for item in server.get("mcp_args", [])],
+            "mcp_python": str(server.get("mcp_python") or "").strip(),
+            "mcp_cwd": str(server.get("mcp_cwd") or "").strip(),
+            "mcp_env": {
+                str(key): str(value)
+                for key, value in (server.get("mcp_env") or {}).items()
+            },
             "unsupported": unsupported,
         }
 
