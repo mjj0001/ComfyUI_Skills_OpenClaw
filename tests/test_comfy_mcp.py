@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -16,6 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from shared.comfy_mcp import (  # noqa: E402
     ComfyMcpError,
+    _runtime_site_packages,
     _tool_descriptor,
     _tool_payload,
     resolve_connection,
@@ -125,6 +127,30 @@ class ComfyMcpPayloadTests(unittest.TestCase):
         self.assertEqual(descriptor["name"], "search_templates")
         self.assertEqual(descriptor["required"], ["query"])
         self.assertEqual(descriptor["parameters"], ["query", "limit"])
+
+
+class ComfyMcpRuntimeTests(unittest.TestCase):
+    def test_finds_windows_virtualenv_site_packages(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_root = Path(temp_dir) / "venv"
+            site_packages = env_root / "Lib" / "site-packages"
+            site_packages.mkdir(parents=True)
+
+            self.assertEqual(
+                _runtime_site_packages(env_root / "Scripts" / "python.exe"),
+                [site_packages],
+            )
+
+    def test_finds_posix_virtualenv_site_packages(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            env_root = Path(temp_dir) / "venv"
+            site_packages = env_root / "lib" / "python3.12" / "site-packages"
+            site_packages.mkdir(parents=True)
+
+            self.assertEqual(
+                _runtime_site_packages(env_root / "bin" / "python"),
+                [site_packages],
+            )
 
 
 class McpConfigPreservationTests(unittest.TestCase):

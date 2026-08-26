@@ -123,22 +123,28 @@ def _candidate_pythons(connection: McpConnection) -> list[Path]:
     return candidates
 
 
-def _add_runtime_site_packages(python_path: Path) -> None:
-    site_packages = python_path.parent.parent / "Lib" / "site-packages"
-    if not site_packages.is_dir():
-        return
-    if str(site_packages) not in sys.path:
-        sys.path.insert(0, str(site_packages))
+def _runtime_site_packages(python_path: Path) -> list[Path]:
+    env_root = python_path.parent.parent
+    candidates = [env_root / "Lib" / "site-packages"]
+    for pattern in ("lib/python*/site-packages", "lib64/python*/site-packages"):
+        candidates.extend(sorted(env_root.glob(pattern)))
+    return [candidate for candidate in candidates if candidate.is_dir()]
 
-    pywin32_system32 = site_packages / "pywin32_system32"
-    if pywin32_system32.is_dir():
-        if str(pywin32_system32) not in sys.path:
-            sys.path.insert(0, str(pywin32_system32))
-        if hasattr(os, "add_dll_directory"):
-            _DLL_DIRECTORY_HANDLES.append(os.add_dll_directory(str(pywin32_system32)))
-    for win32_path in (site_packages / "win32", site_packages / "win32" / "lib"):
-        if win32_path.is_dir() and str(win32_path) not in sys.path:
-            sys.path.insert(0, str(win32_path))
+
+def _add_runtime_site_packages(python_path: Path) -> None:
+    for site_packages in _runtime_site_packages(python_path):
+        if str(site_packages) not in sys.path:
+            sys.path.insert(0, str(site_packages))
+
+        pywin32_system32 = site_packages / "pywin32_system32"
+        if pywin32_system32.is_dir():
+            if str(pywin32_system32) not in sys.path:
+                sys.path.insert(0, str(pywin32_system32))
+            if hasattr(os, "add_dll_directory"):
+                _DLL_DIRECTORY_HANDLES.append(os.add_dll_directory(str(pywin32_system32)))
+        for win32_path in (site_packages / "win32", site_packages / "win32" / "lib"):
+            if win32_path.is_dir() and str(win32_path) not in sys.path:
+                sys.path.insert(0, str(win32_path))
 
 
 def _load_sdk(connection: McpConnection) -> tuple[Any, Any, Any]:
