@@ -21,6 +21,11 @@ def default_server() -> dict[str, object]:
         "url": DEFAULT_COMFYUI_SERVER_URL,
         "enabled": True,
         "output_dir": DEFAULT_OUTPUT_DIR,
+        "mcp_command": "comfy-mcp",
+        "mcp_args": [],
+        "mcp_python": "",
+        "mcp_cwd": "",
+        "mcp_env": {"COMFY_BIN": "comfy"},
     }
 
 

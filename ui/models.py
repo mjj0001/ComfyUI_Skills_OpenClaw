@@ -13,6 +13,11 @@ class ServerModel(BaseModel):
     comfy_api_key: str = ""
     enabled: bool = True
     output_dir: str = "./outputs"
+    mcp_command: str = "comfy-mcp"
+    mcp_args: list[str] = Field(default_factory=list)
+    mcp_python: str = ""
+    mcp_cwd: str = ""
+    mcp_env: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("id", mode="before")
     @classmethod
@@ -62,6 +67,11 @@ class CreateServerModel(BaseModel):
     comfy_api_key: str = ""
     enabled: bool = True
     output_dir: str = "./outputs"
+    mcp_command: str = "comfy-mcp"
+    mcp_args: list[str] = Field(default_factory=list)
+    mcp_python: str = ""
+    mcp_cwd: str = ""
+    mcp_env: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("id", mode="before")
     @classmethod

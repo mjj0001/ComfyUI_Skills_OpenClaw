@@ -139,7 +139,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/config")
     async def save_config(config: ConfigModel) -> dict:
-        saved = service.save_config(config.model_dump())
+        saved = service.save_config(config.model_dump(exclude_unset=True))
         return {"status": "success", "config": saved}
 
     # ── Server CRUD ───────────────────────────────────────────────
@@ -163,7 +163,7 @@ def create_app() -> FastAPI:
     @app.put("/api/servers/{server_id}")
     async def update_server(server_id: str, server: ServerModel) -> dict:
         try:
-            updated = service.update_server(server_id, server.model_dump())
+            updated = service.update_server(server_id, server.model_dump(exclude_unset=True))
             return {"status": "success", "server": updated}
         except FileNotFoundError as e:
             raise HTTPException(status_code=404, detail=str(e)) from e

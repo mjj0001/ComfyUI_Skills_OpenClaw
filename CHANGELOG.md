@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **Official local Comfy MCP application layer** — The Skill now routes known, repeatable workflows through the standalone CLI and live ecosystem discovery, validation, template adaptation, and orchestration through the official MCP.
+- **Shell MCP bridge** — Added `scripts/comfy_mcp.py` for probing the official stdio server, listing its live tools, and calling those tools from Agent hosts that only expose shell execution.
+
+### Fixed
+
+- **MCP configuration preservation** — Server edits through the Web UI API no longer discard MCP launcher settings that are not displayed by the current frontend.
+
 ## [0.4.0] - 2026-04-08
 
 ### Added

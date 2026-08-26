@@ -12,6 +12,7 @@ Turn your ComfyUI workflows into callable skills for AI agents. Any agent that c
 - **Multi-server routing** — manage multiple ComfyUI instances under one namespace
 - **Schema-based parameters** — expose a clean contract instead of raw graph nodes
 - **Full lifecycle** — discover, import, execute, manage workflows and dependencies in one tool
+- **Official local Comfy MCP** — live template, node, model, validation, and orchestration capabilities
 - **Web UI included** — optional local dashboard for visual workflow management
 
 ## Quick Start
@@ -30,3 +31,5 @@ comfyui-skill run local/txt2img --args '{"prompt": "a white cat"}'
 - [English README](https://github.com/HuangYuChuh/ComfyUI_Skills_OpenClaw/blob/main/README.md)
 - [Chinese README](https://github.com/HuangYuChuh/ComfyUI_Skills_OpenClaw/blob/main/README.zh-CN.md)
 - [ComfyUI Native Routes Reference]({{ '/comfyui-native-routes/' | relative_url }})
+- [Official Local Comfy MCP Integration]({{ '/comfy-mcp-application-layer/' | relative_url }})
+- [官方本地 Comfy MCP 应用层接入]({{ '/zh/comfy-mcp-application-layer/' | relative_url }})

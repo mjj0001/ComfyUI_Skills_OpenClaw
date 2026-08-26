@@ -4,6 +4,17 @@
 
 格式遵循 [Keep a Changelog](https://keepachangelog.com/)，版本号遵循[语义化版本](https://semver.org/)。
 
+## [未发布]
+
+### Added
+
+- **官方本地 Comfy MCP 应用层** — Skill 现在会把已登记、可重复执行的工作流交给独立 CLI，把实时生态发现、工作流校验、模板调整和复杂编排交给官方 MCP。
+- **Shell MCP 连接桥** — 新增 `scripts/comfy_mcp.py`，让只有 Shell 能力的 Agent 也能探测官方 stdio server、读取实时工具清单并调用 MCP 工具。
+
+### Fixed
+
+- **保留 MCP 配置** — 通过 Web UI API 修改普通服务器信息时，不再丢失当前前端尚未展示的 MCP 启动配置。
+
 ## [0.4.0] - 2026-04-08
 
 ### Added

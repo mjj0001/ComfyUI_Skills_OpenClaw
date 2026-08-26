@@ -80,7 +80,24 @@ ComfyUI Skills for OpenClaw 是一个更适合 Agent 调用的桥接层，用来
 | **ComfyUI 工作流导入** | 导入工作流 JSON，自动识别格式，并生成 Agent 可用的映射层。 |
 | **多服务器路由** | 用统一命名空间管理本地和远程 ComfyUI 服务器，并把任务发到正确的机器上。 |
 | **依赖检查与安装** | 在执行前检查缺失的节点和模型，并通过 CLI 安装支持的依赖。 |
+| **官方本地 Comfy MCP** | 保留 CLI 高效执行的同时，使用官方运行时接口发现当前模板、节点和模型，校验原始工作流并完成复杂编排。 |
 | **可选 Web UI** | 一个用于配置和测试的可视化层。它不替代 CLI，面向 Agent 的能力仍然对应同一套 CLI 工作流。 |
+
+## CLI 与官方本地 Comfy MCP 怎么分工
+
+这个 Skill 不会让 MCP 替代 CLI，而是根据场景选择更合适的入口：
+
+- 已经登记好的工作流、重复生成、批量任务、上传和历史记录，继续走 `comfyui-skill` CLI，路径更短、效率更高。
+- 需要临时找模板、看本机装了什么节点和模型、校验陌生工作流、修改模板参数或管理 ComfyUI 时，走官方本地 Comfy MCP。
+
+如果 Agent 宿主已经接入官方 MCP，Skill 会直接调用它的工具。只有 Shell 能力的 Agent 也可以使用仓库内置的连接桥：
+
+```bash
+python ./scripts/comfy_mcp.py probe
+python ./scripts/comfy_mcp.py call search_templates --arguments '{"query":"upscale"}'
+```
+
+完整的配置、路由和操作边界见 [官方本地 Comfy MCP 接入说明](https://huangyuchuh.github.io/ComfyUI_Skills_OpenClaw/zh/comfy-mcp-application-layer/)。
 
 <a id="quick-start"></a>
 ## 快速开始
